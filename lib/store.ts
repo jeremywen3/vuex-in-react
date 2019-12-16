@@ -9,7 +9,7 @@ export type Store = {
   getters: Function,
   commit: Function,
   state: object
-} 
+}
 
 export default {
   STORE_KEY

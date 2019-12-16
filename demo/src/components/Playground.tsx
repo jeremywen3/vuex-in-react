@@ -1,17 +1,21 @@
 import React from "react";
-import PropTypes from "prop-types";
 import './Playground.css'
 
-const Child1 = ({
-  test,
+type Props = {
+  myCount: number,
+  isGreaterThan2: boolean,
+  onIncrement: Function,
+  onIncrementAsync: Function,
+  onDecrement: Function,
+}
+
+const Playground = ({
   myCount,
-  limitCount,
   isGreaterThan2,
   onIncrement,
   onIncrementAsync,
   onDecrement,
-  children
-}) => {
+}: Props) => {
   function handleInc() {
     if (onIncrement) {
       onIncrement();
@@ -32,7 +36,7 @@ const Child1 = ({
 
   return (
     <div id='container'>
-      <h4> Test connect  </h4> 
+      <h4> Test connect  </h4>
       <h6>Current count = {myCount !== undefined && `${myCount} `} </h6>
       <h6>is it greater than 2 ?  {isGreaterThan2 ? "true" : "false"} </h6>
       <div>
@@ -56,26 +60,4 @@ const Child1 = ({
   );
 };
 
-Child1.defaultProps = {
-  children: undefined,
-  isGreaterThan2: false,
-  limitCount: 2,
-  myCount: 0,
-  test: undefined,
-  onIncrement: undefined,
-  onDecrement: undefined,
-  onIncrementAsync: undefined
-};
-
-Child1.propTypes = {
-  children: PropTypes.node,
-  isGreaterThan2: PropTypes.bool,
-  limitCount: PropTypes.number,
-  myCount: PropTypes.number,
-  test: PropTypes.number,
-  onIncrement: PropTypes.func,
-  onDecrement: PropTypes.func,
-  onIncrementAsync: PropTypes.func
-};
-
-export default Child1;
+export default Playground;

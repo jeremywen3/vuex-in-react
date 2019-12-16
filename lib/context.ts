@@ -1,7 +1,7 @@
 import React from "react";
-import { STORE_KEY, Store} from "./store";
+import { STORE_KEY, Store } from "./store";
 
-export type ContextProps = { 
+export type ContextProps = {
   [STORE_KEY]: Store,
 }
 

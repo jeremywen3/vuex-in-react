@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { STORE_KEY, Store} from "./store";
+import { STORE_KEY, Store } from "./store";
 import StoreContext from "./context";
 
 export type Props = {

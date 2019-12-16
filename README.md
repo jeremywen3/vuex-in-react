@@ -1,18 +1,19 @@
 # Thanks
-- This project was scaffolded from: https://github.com/beeman/template-typescript-package
-- Core logic is forked from https://github.com/dennybiasiolli/react-vuex
 
+- This project was scaffolded from: <https://github.com/beeman/template-typescript-package>
+- Core logic is forked from: <https://github.com/dennybiasiolli/react-vuex>
 
-# Why to fork
+## Why to fork
+
 - Typescript for betting typings
 - Use modern React syntax like context, hook
 - Provide `connectGetter`
 - Bug fixes (search bug fix keyword in source code)
 - Potential performance boost (to be finished)
 
+## How to run demo
 
-# How to run demo
-```
+```bash
 //root folder
 npm link
 

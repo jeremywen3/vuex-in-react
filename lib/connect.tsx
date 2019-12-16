@@ -1,7 +1,7 @@
 import React, { createElement, useEffect, useState, EffectCallback } from "react";
 import hoistStatics from "hoist-non-react-statics";
 
-import { STORE_KEY, Store} from "./store";
+import { STORE_KEY, Store } from "./store";
 import shallowEqual from "./shallowEqual";
 
 import StoreContext from "./context";
@@ -15,7 +15,9 @@ const useEffectOnce = (effect: EffectCallback) => {
   useEffect(effect, []);
 };
 
-export const connectGetter =  (
+/** The connectGetter() is a simplified function of connect, only comes mapGetterToPropsFn.
+ */
+export const connectGetter = (
   mapGetterToPropsFn: Function
 ) => (WrappedComponent: any) => {
   return connect(null, null, null, mapGetterToPropsFn)(WrappedComponent)
@@ -78,7 +80,7 @@ const connect = (
           }
 
           if (Object.keys(newState).length) {
-            setState((previousState: object) => { return {...previousState, ...newState}});
+            setState((previousState: object) => { return { ...previousState, ...newState } });
           }
         });
       }

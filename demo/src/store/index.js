@@ -1,17 +1,22 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import { INCREMENT, INCREMENT_START, INCREMENT_STOP, DECREMENT } from '../mutations';
-import { INCREMENT_ASYNC } from '../actions';
+import Vue from "vue";
+import Vuex from "vuex";
+import {
+  INCREMENT,
+  INCREMENT_START,
+  INCREMENT_STOP,
+  DECREMENT
+} from "../mutations";
+import { INCREMENT_ASYNC } from "../actions";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     count: 0,
-    isIncrementing: false,
+    isIncrementing: false
   },
   getters: {
-    countGreaterThan2: (state, getters) => state.count > 2,
+    countGreaterThan2: (state, getters) => state.count > 2
   },
   mutations: {
     [INCREMENT](state) {
@@ -25,29 +30,30 @@ export default new Vuex.Store({
     },
     [DECREMENT](state) {
       state.count -= 1;
-    },
+    }
   },
   actions: {
     [INCREMENT_ASYNC]({ commit, state }, payload) {
       commit(INCREMENT_START);
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         setTimeout(() => {
           commit(INCREMENT);
           resolve();
         }, 500);
-      }).then(() => commit(INCREMENT_STOP))
+      })
+        .then(() => commit(INCREMENT_STOP))
         .then(() => state.count);
-    },
+    }
   },
   modules: {
     mod1: {
       namespaced: true,
       state: {
         count: 1000,
-        isIncrementing: false,
+        isIncrementing: false
       },
       getters: {
-        countGreaterThan1002: (state, getters) => state.count > 1002,
+        countGreaterThan1002: (state, getters) => state.count > 1002
       },
       mutations: {
         increment(state) {
@@ -61,22 +67,23 @@ export default new Vuex.Store({
         },
         decrement(state) {
           state.count -= 1;
-        },
+        }
       },
       actions: {
         incrementAsync({ commit, state }) {
-          commit('incrementStart');
-          return new Promise((resolve) => {
+          commit("incrementStart");
+          return new Promise(resolve => {
             setTimeout(() => {
-              commit('increment');
+              commit("increment");
               resolve();
             }, 500);
-          }).then(() => commit('incrementStop'))
+          })
+            .then(() => commit("incrementStop"))
             .then(() => state.count);
-        },
-      },
-    },
-  },
+        }
+      }
+    }
+  }
 });
 
 // store.subscribe((mutation, state) => {

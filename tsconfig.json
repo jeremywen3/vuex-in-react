@@ -28,10 +28,8 @@
     "preserveConstEnums": true,
     "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
+    "incremental": true
   },
   "exclude": ["node_modules", "**/__tests__/*", "coverage", "demo", "dist"],
-  "include": [
-    "lib"
-  ]
+  "include": ["lib"]
 }
