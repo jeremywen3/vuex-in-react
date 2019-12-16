@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { INCREMENT, INCREMENT_START, INCREMENT_STOP } from '../mutations';
+import { INCREMENT, INCREMENT_START, INCREMENT_STOP, DECREMENT } from '../mutations';
 import { INCREMENT_ASYNC } from '../actions';
 
 Vue.use(Vuex);
@@ -22,6 +22,9 @@ export default new Vuex.Store({
     },
     [INCREMENT_STOP](state) {
       state.isIncrementing = false;
+    },
+    [DECREMENT](state) {
+      state.count -= 1;
     },
   },
   actions: {
@@ -55,6 +58,9 @@ export default new Vuex.Store({
         },
         incrementStop(state) {
           state.isIncrementing = false;
+        },
+        decrement(state) {
+          state.count -= 1;
         },
       },
       actions: {

@@ -1,19 +1,25 @@
 import React, { createElement, useEffect, useState, EffectCallback } from "react";
 import hoistStatics from "hoist-non-react-statics";
 
-import { STORE_KEY } from "./store";
+import { STORE_KEY, Store} from "./store";
 import shallowEqual from "./shallowEqual";
 
 import StoreContext from "./context";
 
-// type Props = {
-//   [STORE_KEY]: Store,
-//   children: ReactNode[] | ReactNode
-// };
+type Props = {
+  [STORE_KEY]: Store,
+  children: React.ComponentType<any>
+};
 
 const useEffectOnce = (effect: EffectCallback) => {
   useEffect(effect, []);
 };
+
+export const connectGetter =  (
+  mapGetterToPropsFn: Function
+) => (WrappedComponent: any) => {
+  return connect(null, null, null, mapGetterToPropsFn)(WrappedComponent)
+}
 
 
 /** The connect() function connects a React component to a Vuex store.
@@ -22,13 +28,13 @@ const useEffectOnce = (effect: EffectCallback) => {
  * * @param {Function} mapCommitToPropsFn - mapping the Vuex commit action to props that are passed to the component
  * * @param {Function} mapGetterToPropsFn - mapping the Vuex getter to props that are passed to the component
  */
-export default (
-  mapStateToPropsFn: Function,
-  mapDispatchToPropsFn: Function,
-  mapCommitToPropsFn: Function,
-  mapGetterToPropsFn: Function
+const connect = (
+  mapStateToPropsFn: Function | null,
+  mapDispatchToPropsFn?: Function | null,
+  mapCommitToPropsFn?: Function | null,
+  mapGetterToPropsFn?: Function | null
 ) => (WrappedComponent: any) => {
-  function PresentationalComponent(props: any) {
+  function PresentationalComponent(props: Props) {
     const context = React.useContext(StoreContext);
     const [state, setState] = useState();
 
@@ -46,17 +52,17 @@ export default (
         ...(mapCommitToPropsFn && mapCommitToPropsFn(store.commit, props)),
         ...mappedGetters
       };
-
       setState(initialState);
 
       let unsubscribeFn: Function | undefined = undefined;
-      if (mappedState) {
+
+      // Bug fix: In react-vuex, it uses mappedState, but i think we should use initialState !!!!
+      if (initialState) {
         unsubscribeFn = store.subscribe((_mutation: any, state: any) => {
-          console.log("trigger subscribe now");
-          let newState = {};
+          let newState: object = {};
 
           // update state from store state
-          const newMappedState = mapStateToPropsFn(state, props);
+          const newMappedState = mapStateToPropsFn && mapStateToPropsFn(state, props);
           if (!shallowEqual(mappedState, newMappedState)) {
             mappedState = newMappedState;
             newState = { ...newState, ...mappedState };
@@ -64,7 +70,7 @@ export default (
 
           // update state from store getters, if any
           if (mappedGetters) {
-            const newMappedGetters = mapGetterToPropsFn(store.getters, props);
+            const newMappedGetters = mapGetterToPropsFn && mapGetterToPropsFn(store.getters, props);
             if (!shallowEqual(mappedGetters, newMappedGetters)) {
               mappedGetters = newMappedGetters;
               newState = { ...newState, ...mappedGetters };
@@ -72,9 +78,7 @@ export default (
           }
 
           if (Object.keys(newState).length) {
-            setState((previousState: any) =>
-              Object.assign({}, previousState, newState)
-            );
+            setState((previousState: object) => { return {...previousState, ...newState}});
           }
         });
       }
@@ -97,5 +101,7 @@ export default (
   PresentationalComponent.WrappedComponent = WrappedComponent;
 
   // Why https://reactjs.org/docs/higher-order-components.html#static-methods-must-be-copied-over
-  return hoistStatics(PresentationalComponent, WrappedComponent);
+  return hoistStatics(PresentationalComponent, WrappedComponent) as React.ComponentType<any>;
 };
+
+export default connect;

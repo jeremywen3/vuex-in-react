@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import './Playground.css'
 
 const Child1 = ({
   test,
@@ -8,11 +9,18 @@ const Child1 = ({
   isGreaterThan2,
   onIncrement,
   onIncrementAsync,
+  onDecrement,
   children
 }) => {
   function handleInc() {
     if (onIncrement) {
       onIncrement();
+    }
+  }
+
+  function handleDec() {
+    if (onDecrement) {
+      onDecrement();
     }
   }
 
@@ -23,17 +31,24 @@ const Child1 = ({
   }
 
   return (
-    <div style={{ backgroundColor: "grey", padding: "20px" }}>
-      Current count is {myCount !== undefined && `${myCount} `}
+    <div id='container'>
+      <h4> Test connect  </h4> 
+      <h6>Current count = {myCount !== undefined && `${myCount} `} </h6>
+      <h6>is it greater than 2 ?  {isGreaterThan2 ? "true" : "false"} </h6>
       <div>
         {handleInc && (
-          <button type="button" onClick={handleInc}>
-            Test + 1 count
+          <button className="button" onClick={handleInc}>
+            +1 count
+          </button>
+        )}
+        {handleDec && (
+          <button className="button" onClick={handleDec}>
+            -1 count
           </button>
         )}
         {handleIncAsync && (
-          <button type="button" onClick={handleIncAsync}>
-            Test + 1 count async
+          <button className="button" onClick={handleIncAsync}>
+            +1 count async
           </button>
         )}
       </div>
@@ -48,6 +63,7 @@ Child1.defaultProps = {
   myCount: 0,
   test: undefined,
   onIncrement: undefined,
+  onDecrement: undefined,
   onIncrementAsync: undefined
 };
 
@@ -58,6 +74,7 @@ Child1.propTypes = {
   myCount: PropTypes.number,
   test: PropTypes.number,
   onIncrement: PropTypes.func,
+  onDecrement: PropTypes.func,
   onIncrementAsync: PropTypes.func
 };
 

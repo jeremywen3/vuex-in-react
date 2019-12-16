@@ -1,7 +1,7 @@
 import Playground from '../components/Playground';
 import mutations from '../mutations';
 import actions from '../actions';
-import {connect} from 'react-vuex-hook'
+import {connect} from 'vuex-in-react'
 
 const mapStateToProps = (state, ownProps) => ({
   myCount: state.count,
@@ -11,6 +11,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 });
 const mapCommitToProps = (commit, ownProps) => ({
   onIncrement: () => commit(mutations.increment()),
+  onDecrement: () => commit(mutations.decrement()),
 });
 const mapGetterToProps = (getter, ownProps) => ({
   isGreaterThan2: getter.countGreaterThan2,

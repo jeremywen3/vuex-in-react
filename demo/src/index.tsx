@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import {Provider} from "react-vuex-hook";
+import {Provider} from "vuex-in-react";
 import store from "./store";
 import './index.css';
 

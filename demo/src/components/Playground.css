@@ -1,0 +1,17 @@
+#container {
+    background-color: green;
+    margin: 5px;
+    min-height: 300px;
+    min-width: 300px;
+}
+
+#container2 {
+    background-color: orange;
+    margin: 5px;
+    min-height: 300px;
+    min-width: 300px;
+}
+
+.button {
+    margin: 5px;
+}
