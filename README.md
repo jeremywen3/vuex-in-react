@@ -23,3 +23,6 @@ npm link vuex-in-react
 //then
 npm start
 ```
+
+![Screenshot](https://github.com/golangnext/vuex-in-react/blob/master/demo/screenshot/demo.gif?raw=true)
+
