@@ -1,28 +1,23 @@
-import React, { createElement, useEffect, useState, EffectCallback } from "react";
-import hoistStatics from "hoist-non-react-statics";
-
-import { STORE_KEY, Store } from "./store";
-import shallowEqual from "./shallowEqual";
-
-import StoreContext from "./context";
+import React, { createElement, Component } from 'react';
+import hoistStatics from 'hoist-non-react-statics';
+import { Store } from './store';
+import shallowEqual from './shallowEqual';
+import StoreContext from './context';
 
 type Props = {
-  [STORE_KEY]: Store,
-  children: React.ComponentType<any>
+  context: Store;
+  children: React.ComponentType<any>;
 };
 
-const useEffectOnce = (effect: EffectCallback) => {
-  useEffect(effect, []);
-};
+type State = any;
 
 /** The connectGetter() is a simplified function of connect, only comes mapGetterToPropsFn.
  */
-export const connectGetter = (
-  mapGetterToPropsFn: Function
-) => (WrappedComponent: any) => {
-  return connect(null, null, null, mapGetterToPropsFn)(WrappedComponent)
-}
-
+export const connectGetter = (mapGetterToPropsFn: Function) => (
+  WrappedComponent: any
+) => {
+  return connect(null, null, null, mapGetterToPropsFn)(WrappedComponent);
+};
 
 /** The connect() function connects a React component to a Vuex store.
  * * @param {Function} mapStateToPropsFn - mapping the Vuex state to props that are passed to the component
@@ -36,74 +31,88 @@ const connect = (
   mapCommitToPropsFn?: Function | null,
   mapGetterToPropsFn?: Function | null
 ) => (WrappedComponent: any) => {
-  function PresentationalComponent(props: Props) {
-    const context = React.useContext(StoreContext);
-    const [state, setState] = useState();
+  class PresentationalComponent extends Component<Props, State> {
+    store: any;
+    mappedState: any;
+    mappedGetters: any;
+    unsubscribeFn: Function;
 
-    useEffectOnce(() => {
-      const store = props[STORE_KEY] || context[STORE_KEY];
-      let mappedState =
-        mapStateToPropsFn && mapStateToPropsFn(store.state, props);
-      let mappedGetters =
-        mapGetterToPropsFn && mapGetterToPropsFn(store.getters, props);
+    constructor(props: Props) {
+      super(props);
 
-      const initialState = {
-        ...mappedState,
+      this.store = props.context;
+
+      this.mappedState =
+        mapStateToPropsFn && mapStateToPropsFn(this.store.state, props);
+      this.mappedGetters =
+        mapGetterToPropsFn && mapGetterToPropsFn(this.store.getters, props);
+
+      this.state = {
+        ...this.mappedState,
         ...(mapDispatchToPropsFn &&
-          mapDispatchToPropsFn(store.dispatch, props)),
-        ...(mapCommitToPropsFn && mapCommitToPropsFn(store.commit, props)),
-        ...mappedGetters
+          mapDispatchToPropsFn(this.store.dispatch, props)),
+        ...(mapCommitToPropsFn && mapCommitToPropsFn(this.store.commit, props)),
+        ...this.mappedGetters
       };
-      setState(initialState);
 
-      let unsubscribeFn: Function | undefined = undefined;
-
-      // Bug fix: In react-vuex, it uses mappedState, but i think we should use initialState !!!!
-      if (initialState) {
-        unsubscribeFn = store.subscribe((_mutation: any, state: any) => {
-          let newState: object = {};
+      this.unsubscribeFn = this.store.subscribe(
+        (_mutation: any, state: any) => {
+          let newState: State = {};
 
           // update state from store state
-          const newMappedState = mapStateToPropsFn && mapStateToPropsFn(state, props);
-          if (!shallowEqual(mappedState, newMappedState)) {
-            mappedState = newMappedState;
-            newState = { ...newState, ...mappedState };
+          const newMappedState =
+            mapStateToPropsFn && mapStateToPropsFn(state, props);
+          if (!shallowEqual(this.mappedState, newMappedState)) {
+            this.mappedState = newMappedState;
+            newState = { ...this.mappedState, ...newState };
           }
 
           // update state from store getters, if any
-          if (mappedGetters) {
-            const newMappedGetters = mapGetterToPropsFn && mapGetterToPropsFn(store.getters, props);
-            if (!shallowEqual(mappedGetters, newMappedGetters)) {
-              mappedGetters = newMappedGetters;
-              newState = { ...newState, ...mappedGetters };
+          if (this.mappedGetters) {
+            const newMappedGetters =
+              mapGetterToPropsFn &&
+              mapGetterToPropsFn(this.store.getters, props);
+            if (!shallowEqual(this.mappedGetters, newMappedGetters)) {
+              this.mappedGetters = newMappedGetters;
+              newState = { ...newState, ...this.mappedGetters };
             }
           }
 
           if (Object.keys(newState).length) {
-            setState((previousState: object) => { return { ...previousState, ...newState } });
+            this.setState(newState);
           }
-        });
-      }
-
-      return () => {
-        if (typeof unsubscribeFn === "function") {
-          console.log("hide");
-          unsubscribeFn();
         }
-      };
-    });
+      );
+    }
 
-    return createElement(
-      WrappedComponent,
-      { ...props, ...state },
-      props.children
-    );
+    componentWillUnmount() {
+      if (typeof this.unsubscribeFn === 'function') {
+        this.unsubscribeFn();
+      }
+    }
+
+    render() {
+      return createElement(
+        WrappedComponent,
+        { ...this.props, ...this.state },
+        this.props.children
+      );
+    }
   }
 
-  PresentationalComponent.WrappedComponent = WrappedComponent;
+  // PresentationalComponent.WrappedComponent = WrappedComponent;
 
   // Why https://reactjs.org/docs/higher-order-components.html#static-methods-must-be-copied-over
-  return hoistStatics(PresentationalComponent, WrappedComponent) as React.ComponentType<any>;
+  return hoistStatics(
+    (props) => (
+      <StoreContext.Consumer>
+        {(context: Store) => (
+          <PresentationalComponent context={context} {...props} />
+        )}
+      </StoreContext.Consumer>
+    ),
+    WrappedComponent
+  ) as React.ComponentType<any>;
 };
 
 export default connect;

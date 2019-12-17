@@ -8,7 +8,8 @@
     "test": "jest",
     "test:watch": "jest --watchAll",
     "build": "tsc",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "prepare": "npm run build"
   },
   "keywords": [
     "TypeScript",

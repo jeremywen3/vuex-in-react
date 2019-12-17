@@ -1,12 +1,6 @@
-import React from "react";
-import { STORE_KEY, Store } from "./store";
+import React from 'react';
+import { Store } from './store';
 
-export type ContextProps = {
-  [STORE_KEY]: Store,
-}
-
-const StoreContext = React.createContext<ContextProps>({
-  [STORE_KEY]: {} as Store
-});
+const StoreContext = React.createContext<Store>(null as any);
 
 export default StoreContext;
